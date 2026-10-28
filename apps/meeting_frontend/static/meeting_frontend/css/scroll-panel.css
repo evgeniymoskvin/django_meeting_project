@@ -1,0 +1,73 @@
+.scroll_panel:hover {
+    background-color: rgba(245, 245, 245, 0.9);
+}
+
+/* Наверх */
+#scroll_top {
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    text-decoration: none;
+    margin-top: 0px;
+    width: 110px;
+    height: 100%;
+    transition: all 0.15s ease-in-out;
+    display: none;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    background-color: rgba(245, 245, 245, 0.9);
+    opacity: 0.2;
+    z-index: 50;
+}
+
+#scroll_top span {
+    font-family: "Rosatom_regular", serif;
+    font-size: 16px;
+    text-align: center;
+    display: flex;
+    margin-left: 5px;
+    color: black;
+    /*opacity: 0.1;*/
+    transition: opacity 0.2s ease-in-out;
+}
+
+.up-icon {
+
+    display: flex;
+    box-sizing: content-box;
+    mask-image: url('../icons/angle-up-solid.svg');
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    background: #000;
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 16px;
+    width: 16px;
+}
+
+#scroll_top:hover {
+    background-color: rgba(245, 245, 245, 0.9);
+    opacity: 1;
+}
+
+#scroll_top:hover span {
+    opacity: 1;
+}
+
+/* Скрытие панели при маленькой ширине окна */
+@media screen and (max-width: 1430px) {
+    #scroll_top {
+        display: flex;
+        opacity: 0;
+        z-index: 50;
+    }
+
+    #scroll_top:hover {
+        background-color: rgba(245, 245, 245, 0.9);
+    }
+}

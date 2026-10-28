@@ -1,0 +1,162 @@
+{% load meeting_tags %}
+{% load static %}
+
+{#{% get_permission_sidebar user as perm %}#}
+
+<div>
+    <nav class="main-menu" id="sidebar">
+        <ul>
+            <li>
+                <a href="#" style="vertical-align: top">
+
+                    <i class="fa">
+                        <div class="icon-table-list"></div>
+                    </i>
+
+                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">
+                           ЦВОК
+                        </span>
+                </a>
+            </li>
+            {#            {% if perm %}#}
+            {#                <li>#}
+            {#                    <a href="{% url 'add_new_contract' %}">#}
+            {#                        <i class="fa">#}
+            {#                            <div class="icon-add"></div>#}
+            {#                        </i>#}
+            {#                        <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">#}
+            {#                            Добавить договор#}
+            {#                        </span>#}
+            {#                    </a>#}
+            {#                </li>#}
+            {#            {% endif %}#}
+
+            <li>
+                <a href="#">
+                    <i class="fa">
+                        <div class="icon-contracts"></div>
+                    </i>
+                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">
+                            Альбомы
+                        </span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa">
+                        <div class="icon-acts"></div>
+                    </i>
+                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">
+                            Накладные
+                        </span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa">
+                        <div class="icon-favorites-menu"></div>
+                    </i>
+                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">
+                           Избранное
+                        </span>
+                </a>
+            </li>
+
+            {#            <li>#}
+            {#                <a href="#">#}
+            {#                    <i class="fa">#}
+            {#                        <div class="icon-orders"></div>#}
+            {#                    </i>#}
+            {#                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">#}
+            {#                            Заказчики#}
+            {#                        </span>#}
+            {#                </a>#}
+            {#            </li>#}
+            {#            <li>#}
+            {#                <a href="#">#}
+            {#                    <i class="fa">#}
+            {#                        <div class="icon-subcontract"></div>#}
+            {#                    </i>#}
+            {#                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">#}
+            {#                            Субподрядчики#}
+            {#                        </span>#}
+            {#                </a>#}
+            {#            </li>#}
+            {#            <li>#}
+            {#                <a href="#">#}
+            {#                    <i class="fa">#}
+            {#                        <div class="icon-objects"></div>#}
+            {#                    </i>#}
+            {#                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">#}
+            {#                            Объекты#}
+            {#                        </span>#}
+            {#                </a>#}
+            {#            </li>#}
+            {##}
+            {##}
+            {#            <li>#}
+            {#                <a href="#">#}
+            {#                    <i class="fa">#}
+            {#                        <div class="icon-acts"></div>#}
+            {#                    </i>#}
+            {#                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">#}
+            {#                            Акты#}
+            {#                        </span>#}
+            {#                </a>#}
+            {#            </li>#}
+        </ul>
+
+
+        <ul class="logout">
+
+            {% comment %}
+            <li>
+                <a href="#">
+                    <i class="fa">
+                        <div class="icon-faq-menu"></div>
+                    </i>
+                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">
+                            Помощь
+                        </span>
+                </a>
+            </li>
+            {% endcomment %}
+
+            <li>
+                <a href="http://start.el-spb.local">
+                    <i class="fa">
+                        <div class="icon-all-services-menu "></div>
+                    </i>
+                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">
+                            Все сервисы
+                        </span>
+                </a>
+            </li>
+
+            <li>
+                {#                <a href="#" onclick='window.open("{% url "personal-info" %}","Popup", "location,status,scrollbars,resizable,width=800")'>#}
+                <a href="#">
+                    <i class="fa">
+                        <div class="icon-user-menu"></div>
+                    </i>
+                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">
+{#                            {% get_short_name user.id %}#}
+                        </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'logout' %}">
+                    <i class="fa">
+                        <div class="icon-power-off-menu"></div>
+                    </i>
+                    <span class="nav-text text-menu-sidebar" style="text-transform: uppercase">
+                            Выйти
+                        </span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <script type="text/javascript">
+    </script>
+</div>

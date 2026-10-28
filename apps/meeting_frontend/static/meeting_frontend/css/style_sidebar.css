@@ -1,0 +1,371 @@
+/*@import url(https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css);*/
+
+
+.fa-2x {
+    font-size: 2em;
+}
+
+.fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.fa {
+    position: relative;
+    display: table-cell;
+    width: 60px;
+    /*height: 50px;*/
+    height: 42px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 18px;
+}
+
+.main-menu:hover, nav.main-menu.expanded {
+    /*left: calc(100% - 250px);*/
+    width: 250px;
+    overflow: visible;
+    /*background: rgba(255, 255, 255, 0.86);*/
+
+}
+
+.main-menu:hover li > a {
+    color: #F2F2F2;
+}
+
+.main-menu {
+    /*background: #282828;*/
+    background: #1D222A;
+    border-right: 0px solid #e5e5e5;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    right: 0;
+    width: 60px;
+    overflow: hidden;
+    -webkit-transition: width .05s linear;
+    transition: width 0.5s ease-in-out;
+    -webkit-transform: translateZ(0) scale(1, 1);
+    z-index: 1;
+}
+
+@media (max-width: 1600px){
+    .main-menu {
+        width: 15px;
+    }
+}
+
+.main-menu > ul {
+    margin: 7px 0;
+}
+
+.main-menu li {
+    position: relative;
+    display: block;
+    width: 250px;
+}
+
+.main-menu li > a {
+    position: relative;
+    display: table;
+    border-collapse: collapse;
+    border-spacing: 0;
+    color: #F2F2F2;
+    /*font-family: arial;*/
+    font-family: "Rosatom_light", serif;
+    font-size: 13px;
+    text-decoration: none;
+    -webkit-transform: translateZ(0) scale(1, 1);
+    -webkit-transition: all .1s linear;
+    transition: all .1s linear;
+
+}
+
+.main-menu .nav-icon {
+    position: relative;
+    display: table-cell;
+    width: 60px;
+    height: 36px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 18px;
+}
+
+.main-menu .nav-text {
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    margin-top: 15px;
+    width: 190px;
+    /*font-family: 'Titillium Web', sans-serif;*/
+}
+
+.main-menu .nav-text-small {
+    position: relative;
+    display: table-cell;
+    vertical-align: middle;
+    margin-top: 15px;
+    width: 190px;
+    font-size: 12px;
+    /*font-family: 'Titillium Web', sans-serif;*/
+}
+
+.main-menu > ul.logout {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+.no-touch .scrollable.hover {
+    overflow-y: hidden;
+}
+
+.no-touch .scrollable.hover:hover {
+    overflow-y: auto;
+    overflow: visible;
+}
+
+a:hover, a:focus {
+    text-decoration: none;
+}
+
+nav {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+nav ul, nav li {
+    outline: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.main-menu li:hover > a, nav.main-menu li.active > a, .dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus, .dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus, .no-touch .dashboard-page nav.dashboard-menu ul li:hover a, .dashboard-page nav.dashboard-menu ul li.active a {
+    color: #fff;
+    background-color: #000000;
+}
+
+
+.area {
+    float: left;
+    background: #e2e2e2;
+    width: 100%;
+    height: 100%;
+}
+
+
+.numberCircle {
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    padding: 3px;
+
+    background: red;
+    /*border: 2px solid #666;*/
+    color: white;
+    text-align: center;
+    font-size: 11px;
+
+    font-family: "p22_underground_cy_probook", serif;
+}
+
+
+.icon-home {
+    background-image: url('../icons/house-solid_white.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-cloud {
+    background-image: url('../icons/cloud-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+
+.icon-gear-menu {
+    background-image: url('../icons/gear_menu.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-pen-menu {
+    background-image: url('../icons/pen-to-square-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+
+.icon-user-menu {
+    background-image: url('../icons/user-gear-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+
+.icon-angle-up-solid-menu {
+    background-image: url('../icons/angle-up-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+
+.icon-power-off-menu {
+    background-image: url('../icons/power-off-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+
+.icon-report-menu {
+    background-image: url('../icons/report2-svgrepo-com.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-faq-menu {
+    background-image: url('../icons/circle-question-regular.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-print-menu {
+    background-image: url('../icons/print-solid-white.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-all-services-menu {
+    background-image: url('../icons/menu-2-svgrepo-com.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 30px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-scan-menu {
+    background-image: url('../icons/scanner2-svgrepo-com.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 30px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-back-menu {
+    background-image: url('../icons/arrow-right-from-bracket-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-my-scans-menu {
+    background-image: url('../icons/text-documents-svgrepo-com.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 25px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-today-menu {
+    background-image: url('../icons/calendar-week-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px;
+}
+
+/* Or size of icon + spacing */
+
+
+.icon-acts {
+    background-image: url('../icons/file-regular.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-add {
+    background-image: url('../icons/plus-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-table-list {
+    background-image: url('../icons/table-list-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-objects {
+    background-image: url('../icons/industry-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-orders {
+    background-image: url('../icons/file-import-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-subcontract {
+    background-image: url('../icons/file-export-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-contracts {
+    background-image: url('../icons/file-lines-solid.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}
+
+.icon-favorites-menu {
+    background-image: url('../icons/bookmark-regular_white.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 21px;
+    padding-left: 16px; /* Or size of icon + spacing */
+}

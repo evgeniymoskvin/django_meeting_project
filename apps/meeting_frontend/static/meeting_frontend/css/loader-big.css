@@ -1,0 +1,128 @@
+.loader-big {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid;
+    border-color: transparent rgba(68, 128, 243, 0) rgba(68, 128, 243, 0);
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+.loader-big::after {
+    content: '';
+    box-sizing: border-box;
+    /*position: absolute;*/
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    border: 3px solid;
+    border-color: transparent #4480F352 #4480F352;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    animation: rotationBack 0.5s linear infinite;
+    transform-origin: center center;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotationBack {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+
+.loader {
+    margin-top: -5px;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    height: 5px;
+    width: 20%;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: "golos500", serif;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: rgba(2, 94, 161, 0.5);
+}
+
+.loader::after {
+    content: '';
+    width: 80%;
+    height: 100%;
+    /*background: #F23030;*/
+    background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0) 0%,
+    /*rgba(2, 94, 161, 0.2) 20%,*/
+    rgba(2, 94, 161, 0.4) 40%,
+    rgba(2, 94, 161, 0.5) 50%,
+    rgba(2, 94, 161, 0.4) 60%,
+    /*rgba(2, 94, 161, 0.2) 80%,*/
+    rgba(0, 0, 0, 0) 100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
+    animation: animloader 1.5s linear infinite;
+}
+
+@keyframes animloader {
+    0% {
+        left: -50%;
+        transform: translateX(-100%);
+    }
+    100% {
+        left: 50%;
+        transform: translateX(100%);
+    }
+}
+
+.drop_file {
+    display: flex;
+    cursor: pointer;
+    -webkit-mask-image: url("../icons/arrow_drug_and_drop.svg");
+    mask-image: url("../icons/arrow_drug_and_drop.svg");
+    width: 500px;
+    height: 500px;
+    background-color: rgb(174, 211, 242);
+    -webkit-mask-position: center center;
+    mask-position: center center;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    animation: animdrop 1.5s linear infinite;
+}
+
+@keyframes animdrop {
+    0% {
+        /*left: -50%;*/
+        transform: scale(.8);
+    }
+    50% {
+        /*left: 50%;*/
+        transform: scale(1);
+    }
+    100% {
+        /*left: 50%;*/
+        transform: scale(.8);
+    }
+}

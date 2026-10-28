@@ -1,0 +1,320 @@
+{# templates/meeting_frontend/meeting_detail.html #}
+{% extends "meeting_frontend/base.html" %}
+{% load static %}
+
+{% block title %}{{ meeting.title }} — Совещание{% endblock %}
+
+{% block css_script %}
+    {{ block.super }}
+    <link
+            rel="stylesheet"
+            href="{% static 'meeting_frontend/css/meeting_detail.css' %}"
+    >
+{% endblock %}
+
+{% block content %}
+    <div class="meeting-page container-fluid px-3 px-lg-4 py-4">
+
+        <!-- Верхняя панель -->
+        <div class="meeting-header mb-4">
+            <a href="javascript:history.back()" class="back-link">
+                <span aria-hidden="true">←</span> К списку совещаний
+            </a>
+
+            <div class="d-flex flex-wrap justify-content-between
+                    align-items-start gap-3 mt-3">
+                <div class="flex-grow-1">
+                    <h1 class="meeting-title" id="meeting-title">
+                        {{ meeting.title }}
+                    </h1>
+
+                    <div class="meeting-meta mt-2">
+                    <span>
+                        <span aria-hidden="true">◷</span>
+                        {{ meeting.created_at|date:"d.m.Y H:i" }}
+                    </span>
+                        <span>
+                        <span aria-hidden="true">◴</span>
+                        <span id="meeting-duration"
+                              data-seconds="{{ meeting.duration_seconds }}">
+                            {{ meeting.duration_seconds }} сек.
+                        </span>
+                    </span>
+                        <span class="meeting-status">
+                        {{ meeting.get_status_display }}
+                    </span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2">
+                    {% if protocol %}
+                        <span class="btn btn-light border" aria-live="polite">
+                        Протокол: {{ protocol.get_status_display }}
+                    </span>
+                    {% endif %}
+
+                    <form method="post"
+                            {#                      action="{% url 'meeting_frontend:create_meeting_protocol' meeting.pk %}"#}
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">
+                            <span aria-hidden="true">▤</span>
+                            {% if protocol %}
+                                Открыть протокол
+                            {% else %}
+                                Создать протокол
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }}
+                        alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Закрыть"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row g-4">
+
+            <!-- Основная колонка -->
+            <main class="col-12 col-xl-8">
+
+                <!-- Аудиоплеер -->
+                <section class="meeting-card audio-card mb-4"
+                         aria-label="Аудиозапись совещания">
+                    <div class="d-flex align-items-center gap-3">
+                        {% if meeting.audio_file %}
+                            <button type="button"
+                                    class="audio-play-button"
+                                    id="audio-play"
+                                    aria-label="Воспроизвести аудиозапись">
+                                <span id="audio-play-icon" aria-hidden="true">▶</span>
+                            </button>
+
+                            <div class="audio-track flex-grow-1">
+                                <div class="audio-track-title">Аудиозапись совещания</div>
+
+                                <input type="range"
+                                       class="form-range audio-seek"
+                                       id="audio-seek"
+                                       min="0"
+                                       max="100"
+                                       value="0"
+                                       step="0.1"
+                                       aria-label="Позиция воспроизведения">
+
+                                <div class="d-flex justify-content-between audio-time">
+                                    <span id="audio-current-time">00:00</span>
+                                    <span id="audio-total-time">--:--</span>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="audio-unavailable">
+                                Аудиозапись пока недоступна.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if meeting.audio_file %}
+                        <div class="audio-controls mt-3">
+                            <button type="button" class="btn btn-light btn-sm"
+                                    id="audio-back" aria-label="Назад на 15 секунд">
+                                ↶ 15 сек.
+                            </button>
+
+                            <button type="button" class="btn btn-light btn-sm"
+                                    id="audio-forward" aria-label="Вперёд на 15 секунд">
+                                15 сек. ↷
+                            </button>
+
+                            <label class="audio-speed-label ms-auto"
+                                   for="audio-speed">
+                                Скорость
+                            </label>
+
+                            <select id="audio-speed"
+                                    class="form-select form-select-sm audio-speed">
+                                <option value="0.75">0,75×</option>
+                                <option value="1" selected>1×</option>
+                                <option value="1.25">1,25×</option>
+                                <option value="1.5">1,5×</option>
+                                <option value="2">2×</option>
+                            </select>
+
+                            <a href="{{ meeting.audio_file.url }}"
+                               class="btn btn-light btn-sm"
+                               download>
+                                ↓ Скачать
+                            </a>
+                        </div>
+                        <audio
+                                id="meeting-audio"
+                                preload="metadata"
+                                src="{{ meeting.audio_file.url }}">
+                        </audio>
+                    {% endif %}
+                </section>
+
+                <!-- Краткое содержание -->
+                <section class="meeting-card mb-4">
+                    <div class="section-heading">
+                    <span class="section-icon summary-icon"
+                          aria-hidden="true">✦</span>
+                        <div>
+                            <h2>Краткое содержание</h2>
+                            <p>Основные результаты совещания</p>
+                        </div>
+                    </div>
+
+                    {% if meeting.summary %}
+                        <div class="summary-text">
+                            {{ meeting.summary|linebreaksbr }}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <p class="mb-1">Краткое содержание ещё не готово.</p>
+                            <small>
+                                Оно появится после обработки записи.
+                            </small>
+                        </div>
+                    {% endif %}
+                </section>
+
+                <!-- Полная расшифровка по запросу -->
+                <section class="meeting-card mb-4">
+                    <button class="transcript-toggle"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#transcript-content"
+                            aria-expanded="false"
+                            aria-controls="transcript-content">
+                    <span class="section-icon transcript-icon"
+                          aria-hidden="true">▤</span>
+
+                        <span class="transcript-toggle-text">
+                        <strong>Полная расшифровка</strong>
+                        <small>Открыть текст разговора целиком</small>
+                    </span>
+
+                        <span class="transcript-chevron" aria-hidden="true">⌄</span>
+                    </button>
+
+                    <div class="collapse" id="transcript-content">
+                        <div class="transcript-body">
+                            {% if meeting.transcription %}
+                                {{ meeting.transcription|linebreaksbr }}
+                            {% else %}
+                                <div class="empty-state">
+                                    Полная расшифровка пока недоступна.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- Боковая колонка -->
+            <aside class="col-12 col-xl-4">
+
+                <!-- Участники -->
+                <section class="meeting-card mb-4">
+                    <div class="section-heading">
+                    <span class="section-icon participants-icon"
+                          aria-hidden="true">♙</span>
+                        <div>
+                            <h2>Участники</h2>
+                            <p>{{ participants|length }} человек</p>
+                        </div>
+                    </div>
+
+                    {% if participants %}
+                        <div class="participant-list">
+                            {% for link in participants %}
+                                <div class="participant-item">
+                                    <div class="participant-avatar"
+                                         aria-hidden="true">
+                                        {{ link.employee }}
+                                    </div>
+                                    <div class="participant-info">
+                                        <div class="participant-name">
+                                            {{ link.employee }}
+                                        </div>
+                                        {% if link.employee_id == meeting.created_by_id %}
+                                            <small>Организатор</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            Участники не указаны.
+                        </div>
+                    {% endif %}
+                </section>
+
+                <!-- Протокол -->
+                <section class="meeting-card protocol-card">
+                    <div class="section-heading">
+                    <span class="section-icon protocol-icon"
+                          aria-hidden="true">▤</span>
+                        <div>
+                            <h2>Протокол совещания</h2>
+                            <p>
+                                {% if protocol %}
+                                    Черновик или ранее созданный протокол
+                                {% else %}
+                                    Создайте документ по итогам встречи
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if protocol %}
+                        <div class="protocol-status mb-3">
+                            <span class="status-dot"></span>
+                            {{ protocol.get_status_display }}
+                        </div>
+                        <p class="protocol-description">
+                            Протокол уже связан с этим совещанием.
+                        </p>
+                    {% else %}
+                        <p class="protocol-description">
+                            Подготовьте отдельный документ с итогами встречи.
+                            Черновик можно будет дополнить и отредактировать.
+                        </p>
+                    {% endif %}
+
+                    <form method="post"
+                            {#                      action="{% url 'meeting_frontend:create_meeting_protocol' meeting.pk %}"#}
+                    >
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary w-100">
+                            {% if protocol %}
+                                Перейти к протоколу
+                            {% else %}
+                                Создать протокол
+                            {% endif %}
+                        </button>
+                    </form>
+                </section>
+
+            </aside>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_stuff %}
+    {{ block.super }}
+    <script src="{% static 'meeting_frontend/js/meeting_detail.js' %}"
+            defer></script>
+{% endblock %}

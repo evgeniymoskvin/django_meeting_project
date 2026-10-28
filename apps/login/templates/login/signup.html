@@ -1,0 +1,30 @@
+{% extends  'login/base.html' %}
+
+{% block content %}
+    <div class="box">
+        <form method="post">
+            {% csrf_token %}
+            <h4 class="mt-3">Регистрация пользователя</h4>
+            <p class="h6">Введите имя пользователя</p>
+            <div class="form-floating">
+                {{ form.username }} <br>
+                <label for="floatingInput">Login</label>
+            </div>
+            <p class="h6">Введите пароль</p>
+            <div class="form-floating">
+                {{ form.password1 }} <br>
+                <label for="floatingPassword">Password</label>
+            </div>
+            <p class="h6">Повторите пароль</p>
+            <div class="form-floating">
+                {{ form.password2 }} <br>
+                <label for="floatingPassword">Password</label>
+            </div>
+
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Зарегистрироваться</button>
+
+        </form>
+
+
+    </div>
+{% endblock %}

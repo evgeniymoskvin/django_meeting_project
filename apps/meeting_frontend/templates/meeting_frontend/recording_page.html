@@ -1,0 +1,182 @@
+{% extends "meeting_frontend/base.html" %}
+{% load static %}
+
+{% block css_script %}
+    <link rel="stylesheet" type="text/css" href="{% static 'meeting_frontend/css/recording.css' %}">
+{% endblock %}
+
+{% block js_stuff %}
+    {#    <script type="text/javascript" src="{% static 'meeting_frontend/js/recording.js' %}"></script>#}
+{% endblock %}
+
+{% block content %}
+
+    <main class="main-content w-100">
+
+        <section class="meeting-heading">
+            <div>
+                <div class="title-line">
+                    <h1 id="meeting-title"
+                        class="editable-meeting-title"
+                        title="Нажмите, чтобы изменить название"
+                        role="button"
+                        tabindex="0">{{ meeting_title }}</h1>
+
+                    <input
+                            id="meeting-title-input"
+                            class="meeting-title-input"
+                            type="text"
+                            maxlength="200"
+                            autocomplete="off"
+                            aria-label="Название совещания"
+                            hidden
+                    >
+                </div>
+            </div>
+        </section>
+
+        <section class="recorder-card" aria-label="Управление записью">
+            <div class="recording-status">
+                <span class="status-dot" id="status-dot"></span>
+                <div><strong id="status-title">Готовы начать запись</strong>
+                    <p id="status-description">Проверьте микрофон и нажмите «Начать запись».</p></div>
+                <div class="quality-pill" id="quality-pill"><span
+                        class="quality-bars"><i></i><i></i><i></i><i></i></span><span id="quality-text">Микрофон не запущен</span><span>⌄</span>
+                </div>
+            </div>
+
+            <div class="record-center">
+                <button class="record-orb is-idle"
+                        id="record-orb"
+                        type="button"
+                        aria-label="Начать запись">
+                    <span class="orb-pulse pulse-one"></span>
+                    <span class="orb-pulse pulse-two"></span>
+                    <span class="orb-core">
+                    <span class="orb-symbol" id="orb-symbol">
+                        <svg class="mic-icon"
+                             viewBox="0 0 24 24"
+                             width="28"
+                             height="28"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+                            <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+                            <path d="M5 10v2a7 7 0 0 0 14 0v-2"></path>
+                            <path d="M12 19v3M8 22h8"></path>
+                        </svg>
+                    </span>
+                </span>
+                </button>
+                <div class="timer" id="timer" aria-live="off">00:00:00</div>
+                <p class="record-hint" id="record-hint">Запись сохранится после завершения.<br>Говорите в обычном ритме.
+                </p>
+            </div>
+
+            <div class="wave-wrap">
+                <canvas id="waveform" aria-label="Визуализация уровня звука"></canvas>
+            </div>
+            <div class="level-row">
+                <div class="level-meter" id="level-meter" aria-label="Уровень входящего звука">
+                    {% for i in "12345678901234567890" %}<span></span>{% endfor %}
+                </div>
+                <span class="db-value" id="db-value">— дБ</span>
+                <span class="info-dot"
+                      title="Уровень сигнала помогает проверить громкость, но не гарантирует разборчивость речи.">i</span>
+            </div>
+            <p class="level-hint" id="level-hint">Уровень микрофона появится после начала записи.</p>
+
+            <div class="setting-card participants-setting">
+                <div class="setting-copy">
+                    <b>Участники совещания</b>
+                    <small>Можно выбрать нескольких сотрудников</small>
+
+                    <select id="participants-select"
+                            name="participants"
+                            multiple
+                            style="width: 100%;">
+
+                        {% for employee in employees %}
+                            <option value="{{ employee.pk }}">
+                                {{ employee }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+
+        </section>
+        <div class="bottom-note"><span class="note-icon">i</span><span>Расшифровка, краткое содержание и протокол будут созданы после завершения записи.</span>
+        </div>
+    </main>
+
+
+
+    <div class="modal-backdrop" id="finish-modal" hidden>
+        <div class="confirm-modal success-modal"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="confirm-title"
+             aria-describedby="confirm-description">
+
+            <h2 id="confirm-title">Совещание сохранено</h2>
+
+            <p id="confirm-description">
+                Запись успешно сохранена на сервере.
+            </p>
+
+            <div class="saved-meeting-details">
+                <div>
+                    <span>Название совещания</span>
+                    <strong id="saved-meeting-title">—</strong>
+                </div>
+
+                <div>
+                    <span>Длительность аудио</span>
+                    <strong id="confirm-duration">00:00:00</strong>
+                </div>
+
+                <div>
+                    <span>Аудиофайл</span>
+                    <strong id="saved-filename">—</strong>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button"
+                        class="control-button stop-button"
+                        id="go-transcription">
+                    Перейти к расшифровке →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <form id="csrf-form" hidden>
+        {% csrf_token %}
+    </form>
+    <script>
+        window.RecordingConfig = {
+            uploadUrl: "{% url 'meeting_frontend:recording_page' %}",
+            initialTitle: "{{ meeting_title|escapejs }}"
+        };
+
+        $("#participants-select").select2({
+            width: "100%",
+            placeholder: "Выберите участников",
+            closeOnSelect: false,
+            language: {
+                noResults: function () {
+                    return "Сотрудники не найдены";
+                }
+            }
+        });
+    </script>
+
+    <script src="{% static 'meeting_frontend/js/recording.js' %}" defer></script>
+{% endblock %}

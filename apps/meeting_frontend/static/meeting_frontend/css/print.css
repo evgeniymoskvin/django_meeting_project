@@ -1,0 +1,132 @@
+@media print {
+    .container {
+        width: 100% !important;
+        margin: 0;
+        padding: 0;
+    }
+    /*.container_index {*/
+    /*    width: 100% !important;*/
+    /*    margin: 0;*/
+    /*    padding: 0;*/
+    /*}*/
+        table {
+            min-width: auto;
+            width: auto;
+        }
+        th {
+            min-width: auto;
+            width: auto;
+        }
+        td {
+            min-width: auto;
+            width: auto;
+        }
+    /*    !*.container_index {*!*/
+    /*    !*    max-width: 100% !important;*!*/
+    /*    !*    font-size: 80%;*!*/
+    /*    !*    !*margin: 0;*!*!*/
+    /*    !*    !*padding: 0;*!*!*/
+    /*    !*}*!*/
+    /*    !*.container {*!*/
+    /*    !*    max-width: 100% !important;*!*/
+    /*    !*    font-size: 80%;*!*/
+    /*    !*    !*size: 0.8;*!*!*/
+    /*    !*}*!*/
+    .only_print {
+        display: flex;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .div_add_stage_to_act {
+        display: none !important;
+    }
+
+    .button_blue {
+        display: none;
+    }
+
+    .text-16px-bold {
+        font-size: 14px;
+    }
+
+    .text-16px-regular {
+        font-size: 14px;
+    }
+
+    .text-16px-light {
+        font-size: 14px;
+    }
+
+    .text-14px-bold {
+        font-size: 11px;
+    }
+
+    .text-14px-regular {
+        font-size: 11px;
+    }
+
+    .text-14px-light {
+        font-size: 11px;
+    }
+
+    .text-12px-bold {
+        font-size: 10px;
+    }
+
+    .text-12px-regular {
+        font-size: 10px;
+    }
+
+    .text-12px-light {
+        font-size: 10px;
+    }
+
+    .text-24px-bold {
+        font-size: 18px;
+    }
+
+    .text-20px-bold {
+        font-size: 14px;
+    }
+
+    html, body {
+        /*width: 11in;*/
+        /*height: 8.5in;*/
+        max-width: 100vw;
+        overflow: hidden;
+        padding: 0 0;
+        margin: 0 0;
+        /*scale: 0.9;*/
+    }
+
+    /*    table {*/
+    /*        max-width: 100vw;*/
+    /*        font-size: 6px;*/
+    /*        page-break-inside: avoid*/
+    /*    }*/
+    /*    .container_index {*/
+    /*        min-width: 100% !important;*/
+    /*        margin: 0 0;*/
+    /*        padding-right: 0;*/
+    /*        padding-left: 0;*/
+    /*    }*/
+    /*    .pe-5 {*/
+    /*        padding: 0;*/
+    /*    }*/
+    /*    .ps-5 {*/
+    /*        padding: 0*/
+    /*    }*/
+}
+
+@page {
+    /*size: 297mm 210mm;*/
+    /*size: letter landscape;*/
+    margin-left: 10mm;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+
+}

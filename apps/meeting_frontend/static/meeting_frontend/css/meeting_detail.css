@@ -1,0 +1,629 @@
+/* =========================================================
+   MEETING DETAIL — Linear-inspired redesign
+   Совместимо с существующими классами и Bootstrap 5.1
+   ========================================================= */
+
+.meeting-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+    color: #171b2e;
+    font-family: Inter, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.meeting-page *,
+.meeting-page *::before,
+.meeting-page *::after {
+    box-sizing: border-box;
+}
+
+/* Header */
+
+.meeting-header {
+    padding: 4px 0 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e8eaf1;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 20px;
+    color: #788198;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color .18s ease;
+}
+
+.back-link:hover {
+    color: #4263eb;
+}
+
+.meeting-title {
+    margin: 0;
+    color: #171b2e;
+    font-size: clamp(25px, 3vw, 34px);
+    font-weight: 750;
+    line-height: 1.2;
+    letter-spacing: -1px;
+    overflow-wrap: anywhere;
+}
+
+.meeting-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    margin-top: 14px;
+    color: #7b849a;
+    font-size: 12px;
+}
+
+.meeting-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border: 1px solid #e4eaff;
+    border-radius: 999px;
+    background: #f0f4ff;
+    color: #4263eb;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Cards */
+
+.meeting-card {
+    min-width: 0;
+    padding: 23px;
+    border: 1px solid #e7eaf2;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(23, 34, 68, .025);
+    transition: border-color .18s ease;
+}
+
+.meeting-card:hover {
+    border-color: #dfe4ef;
+}
+
+.audio-card {
+    padding: 22px;
+}
+
+/* Audio player */
+
+.audio-play-button {
+    display: inline-flex;
+    flex: 0 0 54px;
+    width: 54px;
+    height: 54px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #1b2d55;
+    color: #fff;
+    font-size: 19px;
+    cursor: pointer;
+    transition: background-color .18s ease, box-shadow .18s ease;
+}
+
+.audio-play-button:hover {
+    background: #4263eb;
+    box-shadow: 0 4px 12px rgba(66, 99, 235, .2);
+}
+
+.audio-play-button:active {
+    transform: scale(.98);
+}
+
+.audio-play-button:focus-visible {
+    outline: 3px solid #c7d2fe;
+    outline-offset: 3px;
+}
+
+.audio-track {
+    flex: 1;
+    min-width: 0;
+}
+
+.audio-track-title {
+    margin-bottom: 12px;
+    color: #343d54;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.audio-seek {
+    display: block;
+    width: 100%;
+    height: 6px;
+    margin: 0;
+    border: 0;
+    border-radius: 999px;
+    background: #e1e5ed;
+    accent-color: #4263eb;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.audio-seek::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 999px;
+    background: #e1e5ed;
+}
+
+.audio-seek::-moz-range-track {
+    height: 6px;
+    border-radius: 999px;
+    background: #e1e5ed;
+}
+
+.audio-seek::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+    margin-top: -5px;
+    border: 0;
+    border-radius: 50%;
+    background: #4263eb;
+    box-shadow: 0 0 0 3px rgba(66, 99, 235, .08);
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.audio-seek::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: #4263eb;
+    box-shadow: 0 0 0 3px rgba(66, 99, 235, .08);
+}
+
+.audio-seek:focus-visible {
+    outline: 3px solid #dbe4ff;
+    outline-offset: 4px;
+}
+
+.audio-time {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    color: #7b849a;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+}
+
+.audio-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    padding-top: 17px;
+    margin-top: 18px;
+    border-top: 1px solid #edf0f5;
+}
+
+.meeting-page .audio-controls .btn {
+    min-height: 36px;
+    padding: 7px 11px;
+    border: 1px solid #edf0f5;
+    border-radius: 8px;
+    background: #f8f9fc;
+    color: #343d54;
+    font-size: 12px;
+    box-shadow: none;
+}
+
+.meeting-page .audio-controls .btn:hover {
+    border-color: #dfe5f2;
+    background: #f0f3fa;
+}
+
+.audio-speed-label {
+    margin-left: auto;
+    color: #7b849a;
+    font-size: 12px;
+}
+
+.audio-speed {
+    width: 78px;
+    min-height: 36px;
+    border-color: #e4e8f0;
+    border-radius: 8px;
+    color: #252d43;
+    font-size: 12px;
+    box-shadow: none;
+}
+
+.audio-speed:focus {
+    border-color: #9aafff;
+    box-shadow: 0 0 0 3px rgba(66, 99, 235, .09);
+}
+
+#meeting-audio {
+    display: none;
+}
+
+.audio-unavailable {
+    padding: 12px 0;
+    color: #7b849a;
+    font-size: 13px;
+}
+
+/* Section headings */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    margin-bottom: 19px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    color: #171b2e;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -.25px;
+}
+
+.section-heading p {
+    margin: 4px 0 0;
+    color: #8a92a6;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.section-icon {
+    display: inline-flex;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 17px;
+}
+
+.summary-icon {
+    background: #f1ebff;
+    color: #7950f2;
+}
+
+.transcript-icon,
+.participants-icon,
+.protocol-icon {
+    background: #edf2ff;
+    color: #4263eb;
+}
+
+/* Summary */
+
+.summary-text {
+    color: #424c64;
+    font-size: 13px;
+    line-height: 1.85;
+    overflow-wrap: anywhere;
+}
+
+.empty-state {
+    padding: 18px;
+    border: 1px solid #f0f2f7;
+    border-radius: 11px;
+    background: #f8f9fc;
+    color: #7b849a;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.empty-state strong {
+    color: #343d54;
+    font-weight: 600;
+}
+
+/* Transcript */
+
+.transcript-toggle {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+}
+
+.transcript-toggle:hover .transcript-toggle-text strong {
+    color: #4263eb;
+}
+
+.transcript-toggle:focus-visible {
+    outline: 3px solid #dbe4ff;
+    outline-offset: 5px;
+}
+
+.transcript-toggle-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.transcript-toggle-text strong {
+    color: #252d43;
+    font-size: 14px;
+    font-weight: 650;
+    transition: color .18s ease;
+}
+
+.transcript-toggle-text small {
+    color: #8a92a6;
+    font-size: 12px;
+}
+
+.transcript-chevron {
+    flex: 0 0 auto;
+    color: #8a92a6;
+    font-size: 18px;
+    transition: transform .2s ease;
+}
+
+.transcript-toggle[aria-expanded="true"] .transcript-chevron {
+    transform: rotate(180deg);
+}
+
+.transcript-body {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #edf0f5;
+    color: #424c64;
+    font-size: 13px;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.transcript-body p:last-child {
+    margin-bottom: 0;
+}
+
+/* Participants */
+
+.participant-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 14px 0;
+}
+
+.participant-item + .participant-item {
+    border-top: 1px solid #edf0f5;
+}
+
+.participant-avatar {
+    display: flex;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #edf2ff;
+    color: #4263eb;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.participant-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+}
+
+.participant-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.participant-name {
+    color: #293249;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.participant-info small {
+    display: block;
+    margin-top: 3px;
+    color: #8a92a6;
+    font-size: 11px;
+}
+
+/* Protocol */
+
+.protocol-description {
+    margin-bottom: 16px;
+    color: #7b849a;
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+.protocol-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 13px;
+    color: #626d83;
+    font-size: 12px;
+}
+
+.status-dot {
+    display: inline-block;
+    flex: 0 0 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #eab308;
+}
+
+.meeting-page .protocol-description + .btn,
+.meeting-page .protocol-description + a.btn,
+.meeting-page .protocol-status ~ .btn,
+.meeting-page .protocol-status ~ a.btn {
+    border-radius: 8px;
+}
+
+/* Shared button refinements */
+
+.meeting-page .btn {
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 550;
+    box-shadow: none;
+    transition:
+        color .18s ease,
+        background-color .18s ease,
+        border-color .18s ease;
+}
+
+.meeting-page .btn:focus-visible {
+    outline: 3px solid #dbe4ff;
+    outline-offset: 2px;
+    box-shadow: none;
+}
+
+.meeting-page .btn-primary {
+    border-color: #4263eb;
+    background: #4263eb;
+}
+
+.meeting-page .btn-primary:hover {
+    border-color: #3451d1;
+    background: #3451d1;
+}
+
+/* Responsive */
+
+@media (max-width: 991.98px) {
+    .meeting-header {
+        margin-bottom: 20px;
+    }
+
+    .meeting-card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .meeting-page {
+        padding-right: 12px !important;
+        padding-left: 12px !important;
+    }
+
+    .meeting-header {
+        padding-bottom: 18px;
+        margin-bottom: 16px;
+    }
+
+    .back-link {
+        margin-bottom: 15px;
+    }
+
+    .meeting-title {
+        font-size: 26px;
+        letter-spacing: -.7px;
+    }
+
+    .meeting-meta {
+        gap: 8px 12px;
+        margin-top: 12px;
+    }
+
+    .meeting-card {
+        padding: 16px;
+        border-radius: 13px;
+    }
+
+    .audio-card {
+        padding: 17px 14px;
+    }
+
+    .audio-play-button {
+        flex-basis: 46px;
+        width: 46px;
+        height: 46px;
+    }
+
+    .audio-controls {
+        gap: 7px;
+        padding-top: 14px;
+        margin-top: 15px;
+    }
+
+    .audio-speed-label {
+        margin-left: auto;
+    }
+
+    .audio-speed {
+        width: 72px;
+    }
+
+    .section-heading {
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .section-heading h2 {
+        font-size: 15px;
+    }
+
+    .section-icon {
+        flex-basis: 34px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .empty-state {
+        padding: 14px;
+    }
+
+    .participant-item {
+        padding: 12px 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .meeting-page *,
+    .meeting-page *::before,
+    .meeting-page *::after {
+        transition-duration: .01ms !important;
+    }
+}
