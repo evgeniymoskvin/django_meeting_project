@@ -4,9 +4,11 @@ import uuid
 from pathlib import Path
 
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files.storage import default_storage
 from django.db import transaction
-from django.http import JsonResponse, HttpResponse
+from django.db.models import Q
+from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -16,7 +18,10 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
 from apps.legacy_models.models import EmployeeModel
-from apps.meeting_core.models import MeetingModel, MeetingEmployeesModel, MeetingProtocolModel
+from apps.meeting_core.models import MeetingModel, MeetingEmployeesModel, MeetingProtocolModel, MeetingAccessModel
+
+from apps.meeting_core.audio_utils import save_audio_as_mp3
+from apps.meeting_core.permissions import get_meeting_permissions, get_current_employee
 
 
 # Create your views here.
@@ -170,13 +175,11 @@ class NewRecordingView(View):
                     duration_seconds=duration_seconds,
                     status=MeetingModel.Status.SAVED,
                 )
-
-                # FileField использует upload_to из модели.
-                filename = f"{uuid.uuid4().hex}{allowed_types[content_type]}"
-                meeting.audio_file.save(filename, audio, save=False)
-                saved_audio_path = meeting.audio_file.name
-
+                # Сначала сохраняем встречу, чтобы получить ID
                 meeting.save()
+
+                save_audio_as_mp3(meeting, audio)
+                saved_audio_path = meeting.audio_file.name
 
                 # Создаём связи с участниками.
                 MeetingEmployeesModel.objects.bulk_create([
@@ -229,12 +232,20 @@ class NewRecordingView(View):
         }, status=201)
 
 
+@method_decorator(login_required, name="dispatch")
 class MeetingDetailView(View):
     def get(self, request, pk):
         meeting = get_object_or_404(
             MeetingModel.objects.select_related("created_by"),
             pk=pk,
         )
+
+        permissions = get_meeting_permissions(meeting, request.user)
+
+        if not permissions["can_view"]:
+            return HttpResponseForbidden(
+                "У вас нет доступа к этому совещанию."
+            )
 
         participants = (
             MeetingEmployeesModel.objects
@@ -243,7 +254,38 @@ class MeetingDetailView(View):
             .order_by("employee_id")
         )
 
-        # OneToOneField: у совещания может ещё не быть протокола.
+        access_grants = (
+            MeetingAccessModel.objects
+            .filter(meeting=meeting)
+            .select_related("employee", "granted_by")
+            .order_by("employee_id")
+        )
+
+        current_employee = get_current_employee(request.user)
+        is_creator = (
+                current_employee is not None
+                and meeting.created_by_id == current_employee.pk
+        )
+
+        eligible_employees = EmployeeModel.objects.none()
+
+        if is_creator:
+            eligible_employees = (
+                EmployeeModel.objects
+                .exclude(pk=meeting.created_by_id)
+                .exclude(
+                    pk__in=participants.values_list(
+                        "employee_id", flat=True
+                    )
+                )
+                .exclude(
+                    pk__in=access_grants.values_list(
+                        "employee_id", flat=True
+                    )
+                )
+                .order_by("pk")
+            )
+
         try:
             protocol = meeting.protocol_document
         except MeetingProtocolModel.DoesNotExist:
@@ -253,6 +295,13 @@ class MeetingDetailView(View):
             "meeting": meeting,
             "participants": participants,
             "protocol": protocol,
+            "access_grants": access_grants,
+            "permissions": permissions,
+            "eligible_employees": eligible_employees,
+            "is_creator": is_creator,
+            "can_manage_participants": (current_employee is not None and meeting.created_by_id == current_employee.pk),
+            "current_employee": current_employee,
+            "current_employee_id": (current_employee.pk if current_employee is not None else None),
         }
 
         return render(
@@ -260,3 +309,75 @@ class MeetingDetailView(View):
             "meeting_frontend/meeting_details.html",
             context,
         )
+
+
+class MeetingListView(LoginRequiredMixin, View):
+    template_name = "meeting_frontend/meeting_list.html"
+
+    def get(self, request):
+        employee = EmployeeModel.objects.filter(
+            user=request.user
+        ).first()
+
+        meetings = MeetingModel.objects.none()
+
+        if employee:
+            meetings = (
+                MeetingModel.objects
+                .filter(
+                    Q(created_by=employee)
+                    | Q(employees_links__employee=employee)
+                    | Q(access_grants__employee=employee)
+                )
+                .select_related("created_by")
+                .prefetch_related("employees_links__employee")
+                .distinct()
+            )
+
+            scope = request.GET.get("scope", "all")
+
+            if scope == "mine":
+                meetings = meetings.filter(created_by=employee)
+            elif scope == "participant":
+                meetings = meetings.filter(
+                    employees_links__employee=employee
+                )
+            elif scope == "shared":
+                meetings = meetings.filter(
+                    access_grants__employee=employee
+                )
+
+        query = request.GET.get("q", "").strip()
+        if query:
+            meetings = meetings.filter(title__icontains=query)
+
+        status = request.GET.get("status", "")
+        if status in MeetingModel.Status.values:
+            meetings = meetings.filter(status=status)
+
+        meetings = meetings.order_by("-created_at")
+
+        meeting_rows = []
+        for meeting in meetings:
+            seconds = meeting.duration_seconds
+            hours, remainder = divmod(seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+
+            duration_display = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+            meeting_rows.append({
+                "meeting": meeting,
+                "duration_display": duration_display,
+                "participants": [
+                    link.employee
+                    for link in meeting.employees_links.all()
+                ],
+            })
+
+        return render(request, self.template_name, {
+            "meeting_rows": meeting_rows,
+            "statuses": MeetingModel.Status.choices,
+            "selected_scope": request.GET.get("scope", "all"),
+            "selected_status": status,
+            "search_query": query,
+        })

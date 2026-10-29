@@ -1,0 +1,197 @@
+
+.meeting-list-page {
+    color: #202938;
+}
+
+.meeting-list-title {
+    margin: 0 0 8px;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.meeting-list-filters {
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e5e9f0;
+    border-radius: 12px;
+}
+
+/* Вкладки */
+.meeting-list-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #e5e9f0;
+}
+
+.meeting-list-tabs a {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 15px;
+    margin-bottom: -1px;
+    color: #586579;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.meeting-list-tabs a:hover {
+    color: #2459c4;
+    text-decoration: none;
+}
+
+.meeting-list-tabs a.active {
+    color: #2459c4;
+    font-weight: 600;
+    border-bottom-color: #2459c4;
+}
+
+/* Таблица */
+.meeting-table-wrapper {
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid #e5e9f0;
+    border-radius: 12px;
+}
+
+.meeting-table {
+    width: 100%;
+    min-width: 900px;
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.meeting-table thead th {
+    padding: 14px 16px;
+    color: #667085;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    background: #f8fafc;
+    border: 0;
+    border-bottom: 1px solid #e5e9f0;
+}
+
+.meeting-table tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    border: 0;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.meeting-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.meeting-table tbody tr:hover {
+    background: #f9fbff;
+}
+
+.meeting-table th:nth-child(1) { width: 24%; }
+.meeting-table th:nth-child(2) { width: 15%; }
+.meeting-table th:nth-child(3) { width: 12%; }
+.meeting-table th:nth-child(4) { width: 31%; }
+.meeting-table th:nth-child(5) { width: 18%; }
+
+/* Название */
+.meeting-table-title {
+    display: inline-block;
+    color: #2459c4;
+    font-weight: 600;
+    line-height: 1.45;
+    text-decoration: none;
+}
+
+.meeting-table-title:hover {
+    color: #1949a8;
+    text-decoration: underline;
+}
+
+/* Участники */
+.meeting-participants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-width: 360px;
+}
+
+.meeting-participant {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 4px 8px;
+    color: #475467;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background: #f1f4f9;
+    border-radius: 6px;
+}
+
+/* Статус */
+.meeting-status-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    color: #475467;
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+    background: #f1f4f9;
+    border-radius: 20px;
+}
+
+.meeting-status-ready {
+    color: #18794e;
+    background: #e8f7ef;
+}
+
+.meeting-status-error {
+    color: #b42318;
+    background: #fef0ef;
+}
+
+.meeting-status-transcribing,
+.meeting-status-summarizing,
+.meeting-status-generating_protocol,
+.meeting-status-uploading {
+    color: #975a16;
+    background: #fff4db;
+}
+
+/* Пустой результат */
+.meeting-empty {
+    padding: 48px 20px !important;
+    text-align: center;
+    color: #667085;
+}
+
+.meeting-empty strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #202938;
+}
+
+@media (max-width: 768px) {
+    .meeting-list-title {
+        font-size: 1.5rem;
+    }
+
+    .meeting-list-filters {
+        padding: 14px;
+    }
+
+    .meeting-list-tabs {
+        gap: 2px;
+    }
+
+    .meeting-list-tabs a {
+        padding: 9px 10px;
+        font-size: 0.9rem;
+    }
+}

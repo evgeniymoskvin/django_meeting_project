@@ -24,9 +24,85 @@
             <div class="d-flex flex-wrap justify-content-between
                     align-items-start gap-3 mt-3">
                 <div class="flex-grow-1">
-                    <h1 class="meeting-title" id="meeting-title">
-                        {{ meeting.title }}
-                    </h1>
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <h1 class="meeting-title mb-0" id="meeting-title">
+                            {{ meeting.title }}
+                        </h1>
+
+                        {% if is_creator %}
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#rename-meeting-modal"
+                                    aria-label="Изменить название совещания"
+                                    title="Изменить название">
+                                ✎
+                            </button>
+                        {% endif %}
+                    </div>
+
+
+                    {% if is_creator %}
+                        <div class="modal fade"
+                             id="rename-meeting-modal"
+                             tabindex="-1"
+                             aria-labelledby="rename-meeting-title"
+                             aria-hidden="true">
+
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+
+                                    <form method="post"
+                                          action="{% url 'meeting_core:meeting_rename' meeting.pk %}">
+                                        {% csrf_token %}
+
+                                        <div class="modal-header">
+                                            <h5 class="modal-title"
+                                                id="rename-meeting-title">
+                                                Изменить название совещания
+                                            </h5>
+
+                                            <button type="button"
+                                                    class="btn-close"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Закрыть"></button>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <label for="new-meeting-title"
+                                                   class="form-label">
+                                                Название
+                                            </label>
+
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="new-meeting-title"
+                                                   name="title"
+                                                   value="{{ meeting.title }}"
+                                                   maxlength="200"
+                                                   required>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button"
+                                                    class="btn btn-light"
+                                                    data-bs-dismiss="modal">
+                                                Отмена
+                                            </button>
+
+                                            <button type="submit"
+                                                    class="btn btn-primary">
+                                                Сохранить
+                                            </button>
+                                        </div>
+
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
 
                     <div class="meeting-meta mt-2">
                     <span>
@@ -123,7 +199,7 @@
                         {% endif %}
                     </div>
 
-                    {% if meeting.audio_file %}
+                    {% if permissions.can_play_audio and meeting.audio_file %}
                         <div class="audio-controls mt-3">
                             <button type="button" class="btn btn-light btn-sm"
                                     id="audio-back" aria-label="Назад на 15 секунд">
@@ -149,77 +225,90 @@
                                 <option value="2">2×</option>
                             </select>
 
-                            <a href="{{ meeting.audio_file.url }}"
-                               class="btn btn-light btn-sm"
-                               download>
-                                ↓ Скачать
-                            </a>
+                            {% if permissions.can_download_audio and meeting.audio_file %}
+                                <a href="{{ meeting.audio_file.url }}"
+                                   class="btn btn-light btn-sm"
+                                   download>
+                                    ↓ Скачать
+                                </a>
+                            {% endif %}
                         </div>
                         <audio
                                 id="meeting-audio"
                                 preload="metadata"
                                 src="{{ meeting.audio_file.url }}">
                         </audio>
-                    {% endif %}
-                </section>
-
-                <!-- Краткое содержание -->
-                <section class="meeting-card mb-4">
-                    <div class="section-heading">
-                    <span class="section-icon summary-icon"
-                          aria-hidden="true">✦</span>
-                        <div>
-                            <h2>Краткое содержание</h2>
-                            <p>Основные результаты совещания</p>
-                        </div>
-                    </div>
-
-                    {% if meeting.summary %}
-                        <div class="summary-text">
-                            {{ meeting.summary|linebreaksbr }}
+                    {% elif meeting.audio_file %}
+                        <div class="audio-unavailable">
+                            Воспроизведение аудио недоступно для вашей учётной записи.
                         </div>
                     {% else %}
-                        <div class="empty-state">
-                            <p class="mb-1">Краткое содержание ещё не готово.</p>
-                            <small>
-                                Оно появится после обработки записи.
-                            </small>
+                        <div class="audio-unavailable">
+                            Аудиозапись пока недоступна.
                         </div>
                     {% endif %}
                 </section>
 
-                <!-- Полная расшифровка по запросу -->
-                <section class="meeting-card mb-4">
-                    <button class="transcript-toggle"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#transcript-content"
-                            aria-expanded="false"
-                            aria-controls="transcript-content">
+                {% if permissions.can_view_summary %}
+                    <!-- Краткое содержание -->
+                    <section class="meeting-card mb-4">
+                        <div class="section-heading">
+                    <span class="section-icon summary-icon"
+                          aria-hidden="true">✦</span>
+                            <div>
+                                <h2>Краткое содержание</h2>
+                                <p>Основные результаты совещания</p>
+                            </div>
+                        </div>
+
+                        {% if meeting.summary %}
+                            <div class="summary-text">
+                                {{ meeting.summary|linebreaksbr }}
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                <p class="mb-1">Краткое содержание ещё не готово.</p>
+                                <small>
+                                    Оно появится после обработки записи.
+                                </small>
+                            </div>
+                        {% endif %}
+                    </section>
+                {% endif %}
+
+                {% if permissions.can_view_transcript %}
+                    <!-- Полная расшифровка по запросу -->
+                    <section class="meeting-card mb-4">
+                        <button class="transcript-toggle"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#transcript-content"
+                                aria-expanded="false"
+                                aria-controls="transcript-content">
                     <span class="section-icon transcript-icon"
                           aria-hidden="true">▤</span>
 
-                        <span class="transcript-toggle-text">
+                            <span class="transcript-toggle-text">
                         <strong>Полная расшифровка</strong>
                         <small>Открыть текст разговора целиком</small>
                     </span>
 
-                        <span class="transcript-chevron" aria-hidden="true">⌄</span>
-                    </button>
+                            <span class="transcript-chevron" aria-hidden="true">⌄</span>
+                        </button>
 
-                    <div class="collapse" id="transcript-content">
-                        <div class="transcript-body">
-                            {% if meeting.transcription %}
-                                {{ meeting.transcription|linebreaksbr }}
-                            {% else %}
-                                <div class="empty-state">
-                                    Полная расшифровка пока недоступна.
-                                </div>
-                            {% endif %}
+                        <div class="collapse" id="transcript-content">
+                            <div class="transcript-body">
+                                {% if meeting.transcription %}
+                                    {{ meeting.transcription|linebreaksbr }}
+                                {% else %}
+                                    <div class="empty-state">
+                                        Полная расшифровка пока недоступна.
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
-                </section>
-
+                    </section>
+                {% endif %}
             </main>
 
             <!-- Боковая колонка -->
@@ -228,8 +317,8 @@
                 <!-- Участники -->
                 <section class="meeting-card mb-4">
                     <div class="section-heading">
-                    <span class="section-icon participants-icon"
-                          aria-hidden="true">♙</span>
+                        {#                    <span class="section-icon participants-icon"#}
+                        {#                          aria-hidden="true">♙</span>#}
                         <div>
                             <h2>Участники</h2>
                             <p>{{ participants|length }} человек</p>
@@ -240,10 +329,10 @@
                         <div class="participant-list">
                             {% for link in participants %}
                                 <div class="participant-item">
-                                    <div class="participant-avatar"
-                                         aria-hidden="true">
-                                        {{ link.employee }}
-                                    </div>
+                                    {#                                    <div class="participant-avatar"#}
+                                    {#                                         aria-hidden="true">#}
+                                    {#                                        {{ link.employee. }}#}
+                                    {#                                    </div>#}
                                     <div class="participant-info">
                                         <div class="participant-name">
                                             {{ link.employee }}
@@ -260,53 +349,398 @@
                             Участники не указаны.
                         </div>
                     {% endif %}
+                    {% if is_creator %}
+                        <button type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                data-bs-toggle="modal"
+                                data-bs-target="#add-participants-modal">
+                            + Добавить
+                        </button>
+                    {% endif %}
                 </section>
 
-                <!-- Протокол -->
-                <section class="meeting-card protocol-card">
-                    <div class="section-heading">
-                    <span class="section-icon protocol-icon"
-                          aria-hidden="true">▤</span>
-                        <div>
-                            <h2>Протокол совещания</h2>
-                            <p>
-                                {% if protocol %}
-                                    Черновик или ранее созданный протокол
-                                {% else %}
-                                    Создайте документ по итогам встречи
-                                {% endif %}
-                            </p>
+
+                {% if can_manage_participants %}
+                    <div class="modal fade"
+                         id="add-participants-modal"
+                         tabindex="-1"
+                         aria-labelledby="add-participants-title"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <form method="post"
+                                      action="{% url 'meeting_core:meeting_participants_add' meeting.pk %}">
+                                    {% csrf_token %}
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title"
+                                            id="add-participants-title">
+                                            Добавить участников
+                                        </h5>
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Закрыть"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        {% if eligible_employees %}
+                                            <label for="participant-ids"
+                                                   class="form-label">
+                                                Выберите сотрудников
+                                            </label>
+
+                                            <select id="participant-ids"
+                                                    name="participant_ids"
+                                                    class="form-select"
+                                                    multiple
+                                                    size="8"
+                                                    required>
+                                                {% for employee in eligible_employees %}
+                                                    <option value="{{ employee.pk }}">
+                                                        {{ employee }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+
+                                            <div class="form-text">
+                                                Можно выбрать несколько сотрудников.
+                                                Уже добавленные участники не отображаются.
+                                            </div>
+                                        {% else %}
+                                            <p class="mb-0">
+                                                Нет сотрудников, которых можно добавить.
+                                            </p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button"
+                                                class="btn btn-light"
+                                                data-bs-dismiss="modal">
+                                            Отмена
+                                        </button>
+
+                                        {% if eligible_employees %}
+                                            <button type="submit"
+                                                    class="btn btn-primary">
+                                                Добавить
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
+                {% endif %}
 
-                    {% if protocol %}
-                        <div class="protocol-status mb-3">
-                            <span class="status-dot"></span>
-                            {{ protocol.get_status_display }}
+
+                {% if permissions.can_manage_access %}
+                    <section class="meeting-card mb-4">
+                        <div class="section-heading">
+                            <div>
+                                <h2>Доступ к совещанию</h2>
+                                <p>Настройка доступа для сотрудников</p>
+                            </div>
                         </div>
-                        <p class="protocol-description">
-                            Протокол уже связан с этим совещанием.
-                        </p>
-                    {% else %}
-                        <p class="protocol-description">
-                            Подготовьте отдельный документ с итогами встречи.
-                            Черновик можно будет дополнить и отредактировать.
-                        </p>
-                    {% endif %}
 
-                    <form method="post"
-                            {#                      action="{% url 'meeting_frontend:create_meeting_protocol' meeting.pk %}"#}
-                    >
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary w-100">
-                            {% if protocol %}
-                                Перейти к протоколу
-                            {% else %}
-                                Создать протокол
-                            {% endif %}
+                        <button type="button"
+                                class="btn btn-primary w-100 mb-3"
+                                data-bs-toggle="modal"
+                                data-bs-target="#grant-access-modal">
+                            + Добавить сотрудников
                         </button>
-                    </form>
-                </section>
+
+                        {% if access_grants %}
+                            <div class="participant-list">
+                                {% for grant in access_grants %}
+                                    <div class="participant-item">
+                                        <div class="participant-info flex-grow-1">
+                                            <div class="participant-name">
+                                                {{ grant.employee }}
+                                            </div>
+
+                                            <small class="text-muted">
+                                                Доступ выдал: {{ grant.granted_by }}
+                                            </small>
+
+                                            <div class="small mt-1">
+                                                {% if grant.can_play_audio %}Аудио{% endif %}
+                                                {% if grant.can_download_audio %} · Скачивание{% endif %}
+                                                {% if grant.can_view_transcript %} · Расшифровка{% endif %}
+                                                {% if grant.can_view_summary %} · Содержание{% endif %}
+                                                {% if grant.can_view_protocol %} · Протокол{% endif %}
+                                                {% if grant.can_edit_protocol %} · Редактирование протокола{% endif %}
+                                                {% if grant.can_manage_access %} · Управление доступом{% endif %}
+                                            </div>
+                                        </div>
+
+                                        <button type="button"
+                                                class="btn btn-outline-danger btn-sm flex-shrink-0"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#revoke-access-{{ grant.pk }}">
+                                            Отозвать
+                                        </button>
+                                    </div>
+
+                                    {# Подтверждение отзыва доступа #}
+                                    <div class="modal fade"
+                                         id="revoke-access-{{ grant.pk }}"
+                                         tabindex="-1"
+                                         aria-labelledby="revoke-access-title-{{ grant.pk }}"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"
+                                                        id="revoke-access-title-{{ grant.pk }}">
+                                                        Отозвать доступ?
+                                                    </h5>
+                                                    <button type="button"
+                                                            class="btn-close"
+                                                            data-bs-dismiss="modal"
+                                                            aria-label="Закрыть"></button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    У сотрудника «{{ grant.employee }}»
+                                                    будет отозван дополнительный доступ
+                                                    к этому совещанию.
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button"
+                                                            class="btn btn-light"
+                                                            data-bs-dismiss="modal">
+                                                        Отмена
+                                                    </button>
+
+                                                    <form method="post"
+                                                          action="{% url 'meeting_core:meeting_access_revoke' meeting.pk grant.pk %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit"
+                                                                class="btn btn-danger">
+                                                            Отозвать доступ
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="empty-state">
+                                Дополнительный доступ пока никому не предоставлен.
+                            </div>
+                        {% endif %}
+                    </section>
+
+                    {# Модальное окно выдачи доступа #}
+                    <div class="modal fade"
+                         id="grant-access-modal"
+                         tabindex="-1"
+                         aria-labelledby="grant-access-title"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <form method="post"
+                                      action="{% url 'meeting_core:meeting_access_grant' meeting.pk %}">
+                                    {% csrf_token %}
+
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="grant-access-title">
+                                            Добавить сотрудников
+                                        </h5>
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal"
+                                                aria-label="Закрыть"></button>
+                                    </div>
+
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="access-employees" class="form-label">
+                                                Сотрудники
+                                            </label>
+
+                                            <select class="form-select"
+                                                    id="access-employees"
+                                                    name="employee_ids"
+                                                    multiple
+                                                    size="6"
+                                                    required>
+                                                {% for employee in eligible_employees %}
+                                                    <option value="{{ employee.pk }}">
+                                                        {{ employee }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+
+
+                                            {% if not eligible_employees %}
+                                                <div class="alert alert-info mt-2 mb-0">
+                                                    Нет сотрудников, которым можно выдать
+                                                    дополнительный доступ.
+                                                </div>
+                                            {% endif %}
+                                        </div>
+
+                                        <fieldset>
+                                            <legend class="fs-6">Разрешения</legend>
+
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="can_play_audio"
+                                                       id="grant-can-play-audio"
+                                                       checked>
+                                                <label class="form-check-label"
+                                                       for="grant-can-play-audio">
+                                                    Прослушивать аудио
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="can_download_audio"
+                                                       id="grant-can-download-audio">
+                                                <label class="form-check-label"
+                                                       for="grant-can-download-audio">
+                                                    Скачивать аудио
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="can_view_transcript"
+                                                       id="grant-can-view-transcript"
+                                                       checked>
+                                                <label class="form-check-label"
+                                                       for="grant-can-view-transcript">
+                                                    Просматривать расшифровку
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="can_view_summary"
+                                                       id="grant-can-view-summary"
+                                                       checked>
+                                                <label class="form-check-label"
+                                                       for="grant-can-view-summary">
+                                                    Просматривать краткое содержание
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="can_view_protocol"
+                                                       id="grant-can-view-protocol"
+                                                       checked>
+                                                <label class="form-check-label"
+                                                       for="grant-can-view-protocol">
+                                                    Просматривать протокол
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input"
+                                                       type="checkbox"
+                                                       name="can_edit_protocol"
+                                                       id="grant-can-edit-protocol">
+                                                <label class="form-check-label"
+                                                       for="grant-can-edit-protocol">
+                                                    Редактировать протокол
+                                                </label>
+                                            </div>
+
+                                            {% if meeting.created_by_id == current_employee_id %}
+                                                <hr>
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="can_manage_access"
+                                                           id="grant-can-manage-access">
+                                                    <label class="form-check-label"
+                                                           for="grant-can-manage-access">
+                                                        Управлять доступом других сотрудников
+                                                    </label>
+                                                </div>
+                                            {% endif %}
+                                        </fieldset>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button"
+                                                class="btn btn-light"
+                                                data-bs-dismiss="modal">
+                                            Отмена
+                                        </button>
+
+                                        <button type="submit"
+                                                class="btn btn-primary"
+                                                {% if not eligible_employees %}disabled{% endif %}>
+                                            Выдать доступ
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if permissions.can_view_protocol %}
+                    <!-- Протокол -->
+                    <section class="meeting-card protocol-card">
+                        <div class="section-heading">
+                    <span class="section-icon protocol-icon"
+                          aria-hidden="true">▤</span>
+                            <div>
+                                <h2>Протокол совещания</h2>
+                                <p>
+                                    {% if protocol %}
+                                        Черновик или ранее созданный протокол
+                                    {% else %}
+                                        Создайте документ по итогам встречи
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        {% if protocol %}
+                            <div class="protocol-status mb-3">
+                                <span class="status-dot"></span>
+                                {{ protocol.get_status_display }}
+                            </div>
+                            <p class="protocol-description">
+                                Протокол уже связан с этим совещанием.
+                            </p>
+                        {% else %}
+                            <p class="protocol-description">
+                                Подготовьте отдельный документ с итогами встречи.
+                                Черновик можно будет дополнить и отредактировать.
+                            </p>
+                        {% endif %}
+
+                        <form method="post"
+                                {#                      action="{% url 'meeting_frontend:create_meeting_protocol' meeting.pk %}"#}
+                        >
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary w-100">
+                                {% if protocol %}
+                                    Перейти к протоколу
+                                {% else %}
+                                    Создать протокол
+                                {% endif %}
+                            </button>
+                        </form>
+                    </section>
+                {% endif %}
 
             </aside>
         </div>

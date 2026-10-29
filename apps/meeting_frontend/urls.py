@@ -7,4 +7,5 @@ urlpatterns = [
 
     path('', views.NewRecordingView.as_view(), name='recording_page'),
     path('meeteng/<str:pk>', views.MeetingDetailView.as_view(), name='meeting_detail'),
+    path("meetings/", views.MeetingListView.as_view(), name="meeting_list"),
 ]

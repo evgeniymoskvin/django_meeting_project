@@ -56,8 +56,8 @@ class MeetingModel(BaseMeetingModel):
         ERROR = "error", "Ошибка обработки"
 
     title = models.CharField(
-            max_length=200,
-            verbose_name="Название совещания",
+        max_length=200,
+        verbose_name="Название совещания",
     )
 
     created_by = models.ForeignKey(
@@ -104,6 +104,7 @@ class MeetingModel(BaseMeetingModel):
     def __str__(self):
         return self.title
 
+
 class MeetingEmployeesModel(BaseMeetingModel):
     meeting = models.ForeignKey(
         MeetingModel,
@@ -115,10 +116,6 @@ class MeetingEmployeesModel(BaseMeetingModel):
         EmployeeModel,
         on_delete=models.PROTECT,
         related_name="meeting_links",
-    )
-
-    added_at = models.DateTimeField(
-        auto_now_add=True,
     )
 
     class Meta:
@@ -134,6 +131,7 @@ class MeetingEmployeesModel(BaseMeetingModel):
     def __str__(self):
         return f"{self.meeting} — {self.employee}"
 
+
 class MeetingProtocolModel(BaseMeetingModel):
     class Status(models.TextChoices):
         DRAFT = "draft", "Черновик"
@@ -141,7 +139,6 @@ class MeetingProtocolModel(BaseMeetingModel):
         REVIEW = "review", "На согласовании"
         APPROVED = "approved", "Согласован"
         SIGNED = "signed", "Подписан"
-
 
     meeting = models.OneToOneField(
         "MeetingModel",
@@ -175,7 +172,6 @@ class MeetingProtocolModel(BaseMeetingModel):
         verbose_name="Дата протокола",
     )
 
-
     updated_at = models.DateTimeField(
         auto_now=True,
         verbose_name="Дата изменения",
@@ -188,3 +184,42 @@ class MeetingProtocolModel(BaseMeetingModel):
 
     def __str__(self):
         return f"{self.title} — {self.meeting.title}"
+
+
+class MeetingAccessModel(BaseMeetingModel):
+    """Таблица, кому расширен доступ для просмотра того или иного совещания"""
+    meeting = models.ForeignKey(
+        MeetingModel,
+        on_delete=models.CASCADE,
+        related_name="access_grants",
+    )
+    employee = models.ForeignKey(
+        EmployeeModel,
+        on_delete=models.CASCADE,
+        related_name="meeting_access_grants",
+    )
+
+    can_play_audio = models.BooleanField(verbose_name="Может прослушивать аудио", default=True)
+    can_download_audio = models.BooleanField(verbose_name="Может скачивать аудио", default=False)
+    can_view_transcript = models.BooleanField(verbose_name="Может просматривать расшифровку", default=True)
+    can_view_summary = models.BooleanField(verbose_name="Может просматривать краткое содержание", default=True)
+    can_view_protocol = models.BooleanField(verbose_name="Может смотреть протокол", default=True)
+    can_edit_protocol = models.BooleanField(verbose_name="Может редактировать протокол", default=False)
+    can_manage_access = models.BooleanField(verbose_name="Может редактировать доступы", default=False)
+
+    granted_by = models.ForeignKey(
+        EmployeeModel,
+        verbose_name="Кто предоставил доступ",
+        on_delete=models.PROTECT,
+        related_name="granted_meeting_access",
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["meeting", "employee"],
+                name="unique_meeting_employee_access",
+            ),
+        ]
+        verbose_name = "Доступ к совещанию"
+        verbose_name_plural = "Доступы к совещаниям"

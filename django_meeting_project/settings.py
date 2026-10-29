@@ -142,3 +142,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 # LOGIN_REDIRECT_URL = 'vok/1'
 LOGOUT_REDIRECT_URL = 'login'
+
+FFMPEG_BINARY = os.environ.get("FFMPEG_BINARY", "ffmpeg")

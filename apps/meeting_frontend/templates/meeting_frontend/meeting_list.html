@@ -1,0 +1,157 @@
+
+{% extends "meeting_frontend/base.html" %}
+{% load static %}
+
+{% block title %}Совещания{% endblock %}
+
+{% block css_script %}
+    {{ block.super }}
+    <link rel="stylesheet"
+          href="{% static 'meeting_frontend/css/meeting_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="meeting-list-page container-fluid px-3 px-lg-4 py-4">
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="meeting-list-title">Совещания</h1>
+            <p class="text-muted mb-0">
+                Совещания, которые вы создали, в которых участвовали
+                или к которым получили доступ
+            </p>
+        </div>
+        <a href="{% url 'meeting_frontend:recording_page' %}" class="btn btn-primary">
+            + Новое совещание
+        </a>
+    </div>
+
+    <form method="get" class="meeting-list-filters mb-4">
+        <div class="row g-3">
+            <div class="col-12 col-lg-7">
+                <label for="meeting-search" class="form-label">
+                    Поиск по названию
+                </label>
+                <input
+                    id="meeting-search"
+                    type="search"
+                    name="q"
+                    class="form-control"
+                    value="{{ search_query }}"
+                    placeholder="Введите название совещания">
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-3">
+                <label for="meeting-status" class="form-label">
+                    Статус
+                </label>
+                <select id="meeting-status" name="status"
+                        class="form-select">
+                    <option value="">Все статусы</option>
+                    {% for value, label in statuses %}
+                        <option value="{{ value }}"
+                            {% if selected_status == value %}
+                                selected
+                            {% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-2 d-flex align-items-end">
+                <button type="submit"
+                        class="btn btn-outline-primary w-100">
+                    Найти
+                </button>
+            </div>
+        </div>
+
+        <input type="hidden" name="scope" value="{{ selected_scope }}">
+    </form>
+
+    <nav class="meeting-list-tabs mb-3" aria-label="Тип совещаний">
+        <a href="?scope=all"
+           class="{% if selected_scope == 'all' %}active{% endif %}">
+            Все совещания
+        </a>
+        <a href="?scope=mine"
+           class="{% if selected_scope == 'mine' %}active{% endif %}">
+            Мои совещания
+        </a>
+        <a href="?scope=participant"
+           class="{% if selected_scope == 'participant' %}active{% endif %}">
+            Я участвовал
+        </a>
+        <a href="?scope=shared"
+           class="{% if selected_scope == 'shared' %}active{% endif %}">
+            Мне предоставлен доступ
+        </a>
+    </nav>
+
+    <div class="meeting-table-wrapper">
+        <table class="table meeting-table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Совещание</th>
+                    <th>Дата</th>
+                    <th>Длительность</th>
+                    <th>Участники</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in meeting_rows %}
+                    <tr>
+                        <td>
+                            <a class="meeting-table-title"
+                               href="{% url 'meeting_frontend:meeting_detail' row.meeting.pk %}">
+                                {{ row.meeting.title }}
+                            </a>
+                        </td>
+                        <td class="text-nowrap">
+                            {{ row.meeting.created_at|date:"d.m.Y H:i" }}
+                        </td>
+                        <td class="text-nowrap">
+                            {{ row.duration_display }}
+                        </td>
+                        <td>
+                            {% if row.participants %}
+                                <div class="meeting-participants">
+                                    {% for participant in row.participants %}
+                                        <span class="meeting-participant"
+                                              title="{{ participant }}">
+                                            {{ participant }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <span class="text-muted">
+                                    Не указаны
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="meeting-status-badge
+                                meeting-status-{{ row.meeting.status }}">
+                                {{ row.meeting.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="meeting-empty">
+                            <strong>Совещания не найдены</strong>
+                            <p class="mb-0">
+                                Попробуйте изменить поиск или фильтры.
+                            </p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
