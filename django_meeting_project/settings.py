@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5j9%ju-nade#cb01y=@p^jfew80%wy*$gn5hm#hycibqfc5%@='
+SECRET_KEY = 'django-insecure-7nba*%s6z7qpj$lw9m_j2msr70lapv-^z(vfd$vv#p&&o3k$2k'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -139,8 +139,25 @@ MAILERS = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = 'login'
+# LOGIN_URL = 'login'
+LOGIN_URL = 'oidc_login'
 # LOGIN_REDIRECT_URL = 'vok/1'
 LOGOUT_REDIRECT_URL = 'login'
 
 FFMPEG_BINARY = os.environ.get("FFMPEG_BINARY", "ffmpeg")
+
+# OIDC Client settings
+
+OIDC_AUTHORITY = "http://127.0.0.1:8003/o"
+
+OIDC_CLIENT_ID = "1pk7ZfKkZGIFhxjhw068CIkpWJf3TFDu1cy7dIkX"
+
+OIDC_REDIRECT_URI = "http://localhost:8001/login/oidc/callback/"
+
+OIDC_SCOPES = ["openid", "profile", "email"]
+
+# python manage.py shell -c "import requests; a=requests.get('http://127.0.0.1:8003/o/.well-known/openid-configuration', timeout=5); print('Discovery:', a.status_code); d=a.json(); print('Issuer:', d['issuer']); print('JWKS URI:', d['jwks_uri']); b=requests.get(d['jwks_uri'], timeout=5); print('JWKS:', b.status_code); print('Keys:', [(k.get('kid'), k.get('kty'), k.get('alg')) for k in b.json()['keys']])"
+
+
+SESSION_COOKIE_DOMAIN = None
+SESSION_COOKIE_NAME = 'testsessionid'

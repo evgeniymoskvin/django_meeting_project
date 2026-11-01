@@ -136,3 +136,5 @@ class MoreDetailsEmployeeModel(models.Model):
 
     def __str__(self):
         return f'{self.emp}'
+
+
